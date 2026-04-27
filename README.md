@@ -21,7 +21,7 @@ The site works without an API key using local fallback answers. Add `OPENAI_API_
 ## Customize
 
 1. Replace placeholder content in `app/lib/profile.ts`.
-2. Update the generated `/resume` route, or replace `profile.links.resume` with a PDF path after adding `public/resume.pdf`.
+2. Update the generated `/resume` route, or replace `profile.links.resume` with another PDF path after adding the PDF under `public/`.
 3. Update links in `profile.links`.
 4. Deploy to Vercel and add `OPENAI_API_KEY` and `OPENAI_MODEL` as environment variables.
 

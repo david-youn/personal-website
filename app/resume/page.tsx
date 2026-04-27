@@ -18,6 +18,7 @@ export default function ResumePage() {
             <a href={profile.links.github}>GitHub</a>
             <a href={profile.links.linkedin}>LinkedIn</a>
             <a href={profile.links.email}>Email</a>
+            <a href={profile.links.resumePdf}>PDF</a>
           </div>
         </header>
 
@@ -38,7 +39,7 @@ export default function ResumePage() {
             <article key={`${item.role}-${item.organization}`}>
               <h3>{item.role}</h3>
               <p>
-                {item.organization} | {item.period}
+                {item.organization} | {item.period} | {item.location}
               </p>
               <ul>
                 {item.highlights.map((highlight) => (
@@ -57,6 +58,19 @@ export default function ResumePage() {
               <p>{project.summary}</p>
               <p>{project.impact}</p>
               <p>{project.stack.join(" / ")}</p>
+            </article>
+          ))}
+        </section>
+
+        <section>
+          <h2>Education</h2>
+          {profile.education.map((item) => (
+            <article key={item.school}>
+              <h3>{item.school}</h3>
+              <p>
+                {item.degree} | {item.graduation}
+              </p>
+              <p>{item.details.join(" / ")}</p>
             </article>
           ))}
         </section>
