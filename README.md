@@ -25,6 +25,13 @@ The site works without an API key using local fallback answers. Add `OPENAI_API_
 3. Update links in `profile.links`.
 4. Deploy to Vercel and add `OPENAI_API_KEY` and `OPENAI_MODEL` as environment variables.
 
+## Agent Knowledge
+
+- Put resume-style facts, public links, skills, experience, education, and project summaries in `app/lib/profile.ts`.
+- Put richer agent context in `app/lib/agentKnowledge.ts`: career story, work style, strengths, project deep dives, and interview talking points.
+- For every major project, add the problem, users, your role, architecture, hard technical decisions, tradeoffs, measurable impact, links, and what you would improve next.
+- Keep secrets, private company details, internal URLs, and anything under NDA out of these files. Anything committed here can become public.
+
 ## Good Next Features
 
 - Add a real resume parser or structured `resume.json`.
