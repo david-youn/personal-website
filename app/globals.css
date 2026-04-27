@@ -267,6 +267,20 @@ pre {
   gap: 28px;
 }
 
+.resume-nav {
+  display: flex;
+}
+
+.resume-nav a {
+  color: #0b5cad;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.resume-nav a::before {
+  content: "< ";
+}
+
 .resume-header {
   display: flex;
   justify-content: space-between;

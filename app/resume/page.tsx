@@ -1,4 +1,5 @@
 import { profile } from "@/app/lib/profile";
+import Link from "next/link";
 
 export const metadata = {
   title: `${profile.name} | Resume`,
@@ -8,6 +9,10 @@ export default function ResumePage() {
   return (
     <main className="resume-page">
       <section className="resume-sheet">
+        <nav className="resume-nav">
+          <Link href="/">Back to terminal</Link>
+        </nav>
+
         <header className="resume-header">
           <div>
             <p className="eyebrow">resume draft</p>

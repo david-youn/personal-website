@@ -50,12 +50,37 @@ const starterLines: TerminalLine[] = [
     id: "hint",
     role: "assistant",
     content:
-      "Try: ask what projects should I look at first?  /  ask why would David be a strong intern?",
+      "Try: ask what projects should I look at first?  /  ask why would David be strong in a backend role?",
   },
 ];
 
 function createId() {
   return crypto.randomUUID();
+}
+
+function getPromptLabel(role: TerminalLine["role"]) {
+  if (role === "user") {
+    return "you";
+  }
+
+  if (role === "error") {
+    return "err";
+  }
+
+  if (role === "system") {
+    return "system";
+  }
+
+  return "agent";
+}
+
+function TerminalOutputLine({ line }: { line: TerminalLine }) {
+  return (
+    <div className={`line ${line.role}`}>
+      <span className="prompt">{getPromptLabel(line.role)}</span>
+      <pre>{line.content}</pre>
+    </div>
+  );
 }
 
 export function TerminalPortfolio() {
@@ -187,16 +212,7 @@ export function TerminalPortfolio() {
 
           <div className="output" aria-live="polite">
             {lines.map((line) => (
-              <div className={`line ${line.role}`} key={line.id}>
-                <span className="prompt">
-                  {line.role === "user"
-                    ? "you"
-                    : line.role === "error"
-                      ? "err"
-                      : "agent"}
-                </span>
-                <pre>{line.content}</pre>
-              </div>
+              <TerminalOutputLine line={line} key={line.id} />
             ))}
             {isThinking ? (
               <div className="line assistant">
