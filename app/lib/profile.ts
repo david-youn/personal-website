@@ -5,6 +5,40 @@ export type ProfileTopic =
   | "skills"
   | "contact";
 
+const skillGroups = [
+  {
+    label: "Programming Languages",
+    items: ["Java", "Python", "SQL", "JavaScript", "TypeScript", "HTML"],
+  },
+  {
+    label: "Frameworks & Tools",
+    items: [
+      "Spring Boot",
+      "Git",
+      "AWS CloudWatch",
+      "AWS Lambda",
+      "Amazon S3",
+      "Ruby on Rails",
+      "Linux",
+    ],
+  },
+  {
+    label: "Database Systems",
+    items: ["MongoDB", "MySQL", "DynamoDB"],
+  },
+  {
+    label: "Other",
+    items: [
+      "Object-Oriented Design",
+      "Distributed Systems",
+      "API Design",
+      "CI/CD",
+      "SDLC",
+      "E2E Testing",
+    ],
+  },
+];
+
 export const profile = {
   name: "David Youn",
   title: "Backend Software Engineer",
@@ -20,26 +54,8 @@ export const profile = {
     resume: "/resume",
     resumePdf: "/David-Youn-Software-Engineer-Resume.pdf",
   },
-  skills: [
-    "Java",
-    "Python",
-    "SQL",
-    "JavaScript",
-    "TypeScript",
-    "Spring Boot",
-    "REST APIs",
-    "AWS CloudWatch",
-    "AWS Lambda",
-    "Amazon S3",
-    "Ruby on Rails",
-    "Linux",
-    "MongoDB",
-    "MySQL",
-    "DynamoDB",
-    "Distributed Systems",
-    "CI/CD",
-    "E2E Testing",
-  ],
+  skillGroups,
+  skills: skillGroups.flatMap((group) => group.items),
   experience: [
     {
       role: "Software Engineer",
@@ -116,7 +132,9 @@ export const topicSummaries: Record<ProfileTopic, string> = {
         `${item.role} at ${item.organization}, ${item.period}. ${item.highlights.join(" ")}`,
     )
     .join("\n"),
-  skills: profile.skills.join(", "),
+  skills: profile.skillGroups
+    .map((group) => `${group.label}: ${group.items.join(", ")}`)
+    .join("\n"),
   contact: `Email: ${profile.links.email}. GitHub: ${profile.links.github}. LinkedIn: ${profile.links.linkedin}. Resume: ${profile.links.resume}. PDF resume: ${profile.links.resumePdf}.`,
 };
 

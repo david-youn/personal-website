@@ -330,6 +330,21 @@ pre {
   gap: 7px;
 }
 
+.skill-groups {
+  display: grid;
+  gap: 10px;
+}
+
+.skill-group {
+  display: grid;
+  gap: 4px;
+}
+
+.resume-page .skill-group h3 {
+  color: #1b2430;
+  font-size: 0.95rem;
+}
+
 .resume-page h2 {
   font-size: 1rem;
   text-transform: uppercase;

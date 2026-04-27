@@ -15,7 +15,6 @@ export default function ResumePage() {
 
         <header className="resume-header">
           <div>
-            <p className="eyebrow">resume draft</p>
             <h1>{profile.name}</h1>
             <p>{profile.title}</p>
           </div>
@@ -35,7 +34,14 @@ export default function ResumePage() {
 
         <section>
           <h2>Skills</h2>
-          <p>{profile.skills.join(" / ")}</p>
+          <div className="skill-groups">
+            {profile.skillGroups.map((group) => (
+              <div className="skill-group" key={group.label}>
+                <h3>{group.label}</h3>
+                <p>{group.items.join(" / ")}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section>

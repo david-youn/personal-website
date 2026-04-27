@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { profile } from "@/app/lib/profile";
 
 type TerminalLine = {
@@ -25,17 +25,25 @@ const commandOutput: Record<string, string> = {
   projects: profile.projects
     .map(
       (project) =>
-        `${project.name} [${project.status}]\n  ${project.summary}\n  Impact: ${project.impact}\n  Stack: ${project.stack.join(", ")}`,
+        `${project.name} [${project.status}]\n  ${project.summary}\n  Impact: ${
+          project.impact
+        }\n  Stack: ${project.stack.join(", ")}`
     )
     .join("\n\n"),
   experience: profile.experience
     .map(
       (item) =>
-        `${item.role} - ${item.organization} (${item.period})\n${item.highlights.map((highlight) => `  - ${highlight}`).join("\n")}`,
+        `${item.role} - ${item.organization} (${item.period})\n${item.highlights
+          .map((highlight) => `  - ${highlight}`)
+          .join("\n")}`
     )
     .join("\n\n"),
   skills: profile.skills.join("  /  "),
-  contact: `GitHub: ${profile.links.github}\nLinkedIn: ${profile.links.linkedin}\nEmail: ${profile.links.email.replace("mailto:", "")}\nResume: ${profile.links.resume}`,
+  contact: `GitHub: ${profile.links.github}\nLinkedIn: ${
+    profile.links.linkedin
+  }\nEmail: ${profile.links.email.replace("mailto:", "")}\nResume: ${
+    profile.links.resume
+  }`,
   help: commandHelp.join("\n"),
 };
 
@@ -43,19 +51,46 @@ const starterLines: TerminalLine[] = [
   {
     id: "boot",
     role: "system",
-    content:
-      "portfolio-agent v0.1 booted. Type 'help' or ask a recruiter-style question.",
+    content: "Type 'help' or ask a recruiter-style question.",
   },
   {
     id: "hint",
     role: "assistant",
-    content:
-      "Try: ask what projects should I look at first?  /  ask why would David be strong in a backend role?",
+    content: "Try: ask what projects should I look at first?",
   },
 ];
 
+const terminalStorageKey = "david-youn-terminal-lines";
+
 function createId() {
   return crypto.randomUUID();
+}
+
+function readStoredLines() {
+  if (typeof window === "undefined") {
+    return starterLines;
+  }
+
+  try {
+    const stored = window.localStorage.getItem(terminalStorageKey);
+    if (!stored) {
+      return starterLines;
+    }
+
+    const parsed = JSON.parse(stored) as TerminalLine[];
+    const isValid =
+      Array.isArray(parsed) &&
+      parsed.every(
+        (line) =>
+          typeof line.id === "string" &&
+          typeof line.content === "string" &&
+          ["system", "user", "assistant", "error"].includes(line.role)
+      );
+
+    return isValid ? parsed : starterLines;
+  } catch {
+    return starterLines;
+  }
 }
 
 function getPromptLabel(role: TerminalLine["role"]) {
@@ -84,10 +119,19 @@ function TerminalOutputLine({ line }: { line: TerminalLine }) {
 }
 
 export function TerminalPortfolio() {
-  const [lines, setLines] = useState<TerminalLine[]>(starterLines);
+  const [lines, setLines] = useState<TerminalLine[]>(readStoredLines);
   const [input, setInput] = useState("");
   const [isThinking, setIsThinking] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const outputEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    window.localStorage.setItem(terminalStorageKey, JSON.stringify(lines));
+  }, [lines]);
+
+  useEffect(() => {
+    outputEndRef.current?.scrollIntoView({ block: "end" });
+  }, [lines, isThinking]);
 
   const transcript = useMemo(
     () =>
@@ -97,7 +141,7 @@ export function TerminalPortfolio() {
           role: line.role,
           content: line.content,
         })),
-    [lines],
+    [lines]
   );
 
   async function askAgent(question: string) {
@@ -220,6 +264,7 @@ export function TerminalPortfolio() {
                 <pre>thinking...</pre>
               </div>
             ) : null}
+            <div ref={outputEndRef} aria-hidden="true" />
           </div>
 
           <form className="command-line" onSubmit={handleSubmit}>
