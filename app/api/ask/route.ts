@@ -51,6 +51,43 @@ type ChatMessage = {
   content: string;
 };
 
+function getAgentErrorMessage(error: unknown) {
+  const maybeError = error as {
+    status?: number;
+    code?: string;
+    type?: string;
+    message?: string;
+  };
+
+  const status = maybeError.status;
+  const code = maybeError.code || maybeError.type || "";
+  const message = maybeError.message || "";
+  const searchable = `${code} ${message}`.toLowerCase();
+
+  if (status === 401 || searchable.includes("invalid_api_key")) {
+    return "The OpenAI API key is missing or invalid. Check OPENAI_API_KEY in Vercel Environment Variables, then redeploy.";
+  }
+
+  if (
+    status === 429 ||
+    searchable.includes("insufficient_quota") ||
+    searchable.includes("billing") ||
+    searchable.includes("quota")
+  ) {
+    return "OpenAI rejected the request because billing, credits, or quota are not available for this API key. Add billing/credits or lower your usage limit in the OpenAI dashboard.";
+  }
+
+  if (
+    status === 404 ||
+    searchable.includes("model") ||
+    searchable.includes("does not exist")
+  ) {
+    return `The configured model (${model}) is not available to this API key. Check OPENAI_MODEL in Vercel or choose a model available in your OpenAI project.`;
+  }
+
+  return "The portfolio agent hit an error. Check the Vercel Function logs for /api/ask and verify your OpenAI project settings.";
+}
+
 function fallbackAnswer(question: string) {
   const lower = question.toLowerCase();
 
@@ -118,11 +155,10 @@ export async function POST(request: Request) {
       mode: "openai-agent",
     });
   } catch (error) {
-    console.error(error);
+    console.error("Portfolio agent error", error);
     return Response.json(
       {
-        error:
-          "The portfolio agent hit an error. Check your server logs and API key.",
+        error: getAgentErrorMessage(error),
       },
       { status: 500 },
     );
