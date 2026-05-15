@@ -103,6 +103,58 @@ export const profile = {
   ],
   projects: [
     {
+      name: "EHR Integration APIs",
+      status: "ActX production work",
+      stack: ["Java", "Spring", "REST APIs", "MongoDB", "Healthcare EHR systems"],
+      summary:
+        "Designed and implemented RESTful APIs integrating with third-party Electronic Health Record systems to support real-time clinical data exchange across healthcare partners.",
+      impact:
+        "Improved interoperability for customer-facing healthcare workflows while working closely with domain experts and geneticists.",
+      links: {
+        demo: "#",
+        repo: "#",
+      },
+    },
+    {
+      name: "Patient Record Backfill and Validation Jobs",
+      status: "ActX production work",
+      stack: ["Python", "MongoDB", "Data validation", "Healthcare data processing"],
+      summary:
+        "Built Python-based data processing jobs to backfill and validate 50M+ patient records for downstream analytics and data completeness.",
+      impact:
+        "Reduced manual operational overhead and improved the reliability of patient-data workflows.",
+      links: {
+        demo: "#",
+        repo: "#",
+      },
+    },
+    {
+      name: "Cross-Region Replication APIs",
+      status: "AWS production work",
+      stack: ["Java", "Distributed systems", "REST APIs", "AWS", "Monitoring"],
+      summary:
+        "Designed and shipped distributed REST APIs supporting cross-region replication for large-scale AWS services.",
+      impact:
+        "Improved system resilience across multiple high-traffic regions and contributed to production service reliability.",
+      links: {
+        demo: "#",
+        repo: "#",
+      },
+    },
+    {
+      name: "High-Volume API Monitoring Dashboards",
+      status: "AWS production work",
+      stack: ["AWS CloudWatch", "Operational monitoring", "Distributed services"],
+      summary:
+        "Built and maintained real-time dashboards for APIs handling 100K+ requests per minute.",
+      impact:
+        "Enabled rapid anomaly detection and supported a 99.9% availability SLA for production services.",
+      links: {
+        demo: "#",
+        repo: "#",
+      },
+    },
+    {
       name: "Portfolio Agent Terminal",
       status: "In progress",
       stack: ["Next.js", "OpenAI Agents SDK", "Vercel"],

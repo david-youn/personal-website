@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { profile } from "@/app/lib/profile";
 
@@ -9,72 +10,50 @@ type TerminalLine = {
   content: string;
 };
 
+const terminalStorageKey = "david-youn-terminal-lines-v2";
+const agentModeStorageKey = "david-youn-terminal-agent-mode-v2";
+
 const commandHelp = [
-  "help       show available commands",
-  "about      quick overview",
-  "projects   featured work",
-  "experience work and leadership notes",
-  "skills     technical stack",
-  "contact    links and email",
-  "clear      reset the terminal",
-  "ask ...    ask the AI portfolio agent",
-];
-
-const commandOutput: Record<string, string> = {
-  about: `${profile.name} - ${profile.title}\n${profile.shortBio}\nLooking for: ${profile.lookingFor}`,
-  projects: profile.projects
-    .map(
-      (project) =>
-        `${project.name} [${project.status}]\n  ${project.summary}\n  Impact: ${
-          project.impact
-        }\n  Stack: ${project.stack.join(", ")}`
-    )
-    .join("\n\n"),
-  experience: profile.experience
-    .map(
-      (item) =>
-        `${item.role} - ${item.organization} (${item.period})\n${item.highlights
-          .map((highlight) => `  - ${highlight}`)
-          .join("\n")}`
-    )
-    .join("\n\n"),
-  skills: profile.skills.join("  /  "),
-  contact: `GitHub: ${profile.links.github}\nLinkedIn: ${
-    profile.links.linkedin
-  }\nEmail: ${profile.links.email.replace("mailto:", "")}\nResume: ${
-    profile.links.resume
-  }`,
-  help: commandHelp.join("\n"),
-};
-
-const starterLines: TerminalLine[] = [
-  {
-    id: "boot",
-    role: "system",
-    content: "Type 'help' or ask a recruiter-style question.",
-  },
-  {
-    id: "hint",
-    role: "assistant",
-    content: "Try: ask what projects should I look at first?",
-  },
-];
-
-const terminalStorageKey = "david-youn-terminal-lines";
+  "Available commands:",
+  "  help     - show the command list",
+  "  about    - show a short bio",
+  "  edu      - show education details",
+  "  exp      - show a short experience summary",
+  "  projects - show featured projects",
+  "  skills   - show technical skills",
+  "  link     - show contact information",
+  "  agent    - enter interactive agent mode",
+  "  clear    - clear the terminal output",
+].join("\n");
 
 function createId() {
   return crypto.randomUUID();
 }
 
+function makeStarterLines(): TerminalLine[] {
+  return [
+    {
+      id: "boot-title",
+      role: "system",
+      content: "David CLI v1.0.0",
+    },
+    {
+      id: "boot-help",
+      role: "assistant",
+      content: "Type `help` to explore available commands.",
+    },
+  ];
+}
+
 function readStoredLines() {
   if (typeof window === "undefined") {
-    return starterLines;
+    return makeStarterLines();
   }
 
   try {
     const stored = window.localStorage.getItem(terminalStorageKey);
     if (!stored) {
-      return starterLines;
+      return makeStarterLines();
     }
 
     const parsed = JSON.parse(stored) as TerminalLine[];
@@ -84,35 +63,114 @@ function readStoredLines() {
         (line) =>
           typeof line.id === "string" &&
           typeof line.content === "string" &&
-          ["system", "user", "assistant", "error"].includes(line.role)
+          ["system", "user", "assistant", "error"].includes(line.role),
       );
 
-    return isValid ? parsed : starterLines;
+    return isValid ? parsed : makeStarterLines();
   } catch {
-    return starterLines;
+    return makeStarterLines();
   }
 }
 
-function getPromptLabel(role: TerminalLine["role"]) {
-  if (role === "user") {
-    return "you";
+function readStoredAgentMode() {
+  if (typeof window === "undefined") {
+    return false;
   }
 
-  if (role === "error") {
-    return "err";
-  }
-
-  if (role === "system") {
-    return "system";
-  }
-
-  return "agent";
+  return window.localStorage.getItem(agentModeStorageKey) === "true";
 }
+
+function getEducationOutput() {
+  return profile.education
+    .map((item) => {
+      const details = item.details.length ? `, ${item.details.join(", ")}` : "";
+      return `${item.degree} - ${item.school} (${item.graduation}${details})`;
+    })
+    .join("\n");
+}
+
+function getExperienceOutput() {
+  return profile.experience
+    .map(
+      (item, index) =>
+        `${index + 1}. ${item.role} - ${item.organization} (${item.period})`,
+    )
+    .join("\n");
+}
+
+function wrapIndented(text: string, indent = "   ", width = 86) {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let current = "";
+
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+
+    if (`${indent}${next}`.length > width && current) {
+      lines.push(`${indent}${current}`);
+      current = word;
+    } else {
+      current = next;
+    }
+  }
+
+  if (current) {
+    lines.push(`${indent}${current}`);
+  }
+
+  return lines.join("\n");
+}
+
+function getProjectsOutput() {
+  return profile.projects
+    .map((project, index) =>
+      [
+        `${index + 1}. ${project.name} (${project.status})`,
+        wrapIndented(project.summary),
+        wrapIndented(`Stack: ${project.stack.join(", ")}`),
+      ].join("\n"),
+    )
+    .join("\n\n");
+}
+
+function getSkillsOutput() {
+  return profile.skillGroups
+    .map((group) => `${group.label}: ${group.items.join(", ")}`)
+    .join("\n");
+}
+
+function getLinksOutput() {
+  return [
+    `Email: ${profile.links.email.replace("mailto:", "")}`,
+    `LinkedIn: ${profile.links.linkedin.replace("https://", "")}`,
+    `GitHub: ${profile.links.github.replace("https://", "")}`,
+  ].join("\n");
+}
+
+const commandOutput: Record<string, string> = {
+  help: commandHelp,
+  about: `${profile.name} - ${profile.title}\n${profile.shortBio}\nLooking for: ${profile.lookingFor}`,
+  edu: getEducationOutput(),
+  exp: getExperienceOutput(),
+  experience: getExperienceOutput(),
+  projects: getProjectsOutput(),
+  skills: getSkillsOutput(),
+  link: getLinksOutput(),
+  contact: getLinksOutput(),
+};
 
 function TerminalOutputLine({ line }: { line: TerminalLine }) {
+  if (line.role === "user") {
+    return (
+      <div className="terminal-line terminal-input-line">
+        <span className="shell-prompt">$</span>
+        <pre>{line.content}</pre>
+      </div>
+    );
+  }
+
   return (
-    <div className={`line ${line.role}`}>
-      <span className="prompt">{getPromptLabel(line.role)}</span>
+    <div className={`terminal-line ${line.role}`}>
       <pre>{line.content}</pre>
     </div>
   );
@@ -122,12 +180,17 @@ export function TerminalPortfolio() {
   const [lines, setLines] = useState<TerminalLine[]>(readStoredLines);
   const [input, setInput] = useState("");
   const [isThinking, setIsThinking] = useState(false);
+  const [isAgentMode, setIsAgentMode] = useState(readStoredAgentMode);
   const inputRef = useRef<HTMLInputElement>(null);
   const outputEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     window.localStorage.setItem(terminalStorageKey, JSON.stringify(lines));
   }, [lines]);
+
+  useEffect(() => {
+    window.localStorage.setItem(agentModeStorageKey, String(isAgentMode));
+  }, [isAgentMode]);
 
   useEffect(() => {
     outputEndRef.current?.scrollIntoView({ block: "end" });
@@ -141,7 +204,7 @@ export function TerminalPortfolio() {
           role: line.role,
           content: line.content,
         })),
-    [lines]
+    [lines],
   );
 
   async function askAgent(question: string) {
@@ -192,6 +255,13 @@ export function TerminalPortfolio() {
     }
   }
 
+  function appendAssistant(content: string) {
+    setLines((current) => [
+      ...current,
+      { id: createId(), role: "assistant", content },
+    ]);
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const raw = input.trim();
@@ -206,61 +276,67 @@ export function TerminalPortfolio() {
       { id: createId(), role: "user", content: raw },
     ]);
 
-    const [command, ...rest] = raw.split(" ");
+    const [command] = raw.split(" ");
     const normalized = command.toLowerCase();
 
     if (normalized === "clear") {
-      setLines(starterLines);
+      setIsAgentMode(false);
+      setLines(makeStarterLines());
       return;
     }
 
-    if (normalized === "ask") {
-      await askAgent(rest.join(" ").trim() || "Give me a quick overview.");
+    if (isAgentMode) {
+      if (normalized === "exit") {
+        setIsAgentMode(false);
+        appendAssistant("Exited agent mode. Type `agent` to re-enter.");
+        return;
+      }
+
+      await askAgent(raw);
+      return;
+    }
+
+    if (normalized === "agent") {
+      setIsAgentMode(true);
+      appendAssistant(
+        "Launching agent shell...\n\nYou are now in agent mode. Talk naturally and type `exit` to return to commands.",
+      );
       return;
     }
 
     if (commandOutput[normalized]) {
-      setLines((current) => [
-        ...current,
-        {
-          id: createId(),
-          role: "assistant",
-          content: commandOutput[normalized],
-        },
-      ]);
+      appendAssistant(commandOutput[normalized]);
       return;
     }
 
-    await askAgent(raw);
+    appendAssistant(
+      `Command not found: ${raw}. Type \`help\` to see the available commands.`,
+    );
   }
 
   return (
     <main className="shell" onClick={() => inputRef.current?.focus()}>
       <section className="terminal" aria-label="Interactive portfolio terminal">
-        <div className="terminal-bar">
-          <div className="window-controls" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </div>
-          <p>{profile.name.toLowerCase().replaceAll(" ", "-")}:~/portfolio</p>
-          <a href={profile.links.resume}>resume</a>
-        </div>
-
-        <div className="terminal-body">
-          <div className="identity">
-            <p className="eyebrow">interactive portfolio</p>
+        <header className="terminal-hero">
+          <div>
+            <p className="terminal-kicker">interactive portfolio</p>
             <h1>{profile.name}</h1>
             <p>{profile.title}</p>
           </div>
+          <nav className="terminal-actions" aria-label="Portfolio links">
+            <Link href={profile.links.resume}>resume</Link>
+            <a href={profile.links.github}>github</a>
+            <a href={profile.links.linkedin}>linkedin</a>
+          </nav>
+        </header>
 
+        <div className="terminal-body">
           <div className="output" aria-live="polite">
             {lines.map((line) => (
               <TerminalOutputLine line={line} key={line.id} />
             ))}
             {isThinking ? (
-              <div className="line assistant">
-                <span className="prompt">agent</span>
+              <div className="terminal-line assistant terminal-thinking">
                 <pre>thinking...</pre>
               </div>
             ) : null}
@@ -268,7 +344,7 @@ export function TerminalPortfolio() {
           </div>
 
           <form className="command-line" onSubmit={handleSubmit}>
-            <label htmlFor="terminal-input">visitor@portfolio</label>
+            <label htmlFor="terminal-input">$</label>
             <input
               ref={inputRef}
               id="terminal-input"
@@ -276,7 +352,7 @@ export function TerminalPortfolio() {
               onChange={(event) => setInput(event.target.value)}
               spellCheck={false}
               autoComplete="off"
-              placeholder="ask about projects, experience, skills..."
+              aria-label={isAgentMode ? "Agent prompt" : "Terminal command"}
             />
           </form>
         </div>
