@@ -6,6 +6,11 @@ export type AgentKnowledgeTopic =
   | "work_style"
   | "strengths"
   | "project_deep_dives"
+  | "work_experience_deep_dives"
+  | "personal_interests"
+  | "hobbies_outside_work"
+  | "values_and_motivations"
+  | "website_context"
   | "interview_talking_points";
 
 export const agentKnowledge: Record<
@@ -33,6 +38,30 @@ export const agentKnowledge: Record<
     "Portfolio Agent Terminal: browser-based terminal portfolio built with Next.js, OpenAI Agents SDK, and Vercel. The purpose is to let recruiters ask interactive questions about David's background while demonstrating practical AI-agent deployment experience.",
     "Add future project case studies here. For each project, include: problem, users, your role, architecture, hard technical decisions, tradeoffs, impact metrics, links, and what you would improve next.",
   ].join("\n"),
+  work_experience_deep_dives: [
+    "Add deeper work stories here. Good entries include: the business or user problem, David's role, system architecture, scale, constraints, hard technical choices, collaboration, impact, and what he learned.",
+    "Keep this public-safe. Do not include private company internals, confidential architecture, internal service names, customer data, credentials, or anything under NDA.",
+  ].join("\n"),
+  personal_interests: [
+    "No detailed personal-interest context has been added yet.",
+    "When David provides context, summarize interests that are appropriate for a public professional website: creative interests, communities, learning goals, side projects, sports, music, volunteering, reading, travel, or other non-work topics he wants visitors to know.",
+    "Do not invent hobbies or personal details. If asked before context is added, say that David has not added detailed personal-interest notes yet.",
+  ].join("\n"),
+  hobbies_outside_work: [
+    "No detailed hobby context has been added yet.",
+    "When David provides context, include hobbies outside work with enough specificity to sound human but not overshare. Mention why they matter to him when known.",
+    "Do not invent hobbies. If asked before context is added, say that David has not added detailed hobby notes yet.",
+  ].join("\n"),
+  values_and_motivations: [
+    "No detailed values-and-motivations context has been added yet.",
+    "When David provides context, include what motivates him as an engineer, what kinds of teams he likes, what he values in coworkers, what problems energize him, and what he is trying to grow into next.",
+    "Do not invent personal values. If asked before context is added, say that David has not added detailed values notes yet.",
+  ].join("\n"),
+  website_context: [
+    "This website is intended to be both a personal website and a portfolio for software engineering job applications.",
+    "The terminal interface is meant to be memorable while still helping recruiters quickly learn about David's experience, projects, technical strengths, and personality.",
+    "The site should represent David as a backend software engineer with production systems experience who is also learning modern AI-agent deployment by building this portfolio.",
+  ].join("\n"),
   interview_talking_points: [
     "For backend roles, emphasize AWS production experience, distributed REST APIs, monitoring at high request volume, on-call ownership, and performance/reliability work.",
     "For product-minded teams, emphasize ActX healthcare integrations, collaboration with domain experts, and shipping 20+ production features across backend and full-stack surfaces.",
@@ -49,6 +78,11 @@ export function getAgentContext(topic?: AgentKnowledgeTopic) {
       agentKnowledge.work_style,
       agentKnowledge.strengths,
       agentKnowledge.project_deep_dives,
+      agentKnowledge.work_experience_deep_dives,
+      agentKnowledge.personal_interests,
+      agentKnowledge.hobbies_outside_work,
+      agentKnowledge.values_and_motivations,
+      agentKnowledge.website_context,
       agentKnowledge.interview_talking_points,
     ].join("\n\n");
   }

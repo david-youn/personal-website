@@ -26,6 +26,11 @@ const portfolioLookup = tool({
         "work_style",
         "strengths",
         "project_deep_dives",
+        "work_experience_deep_dives",
+        "personal_interests",
+        "hobbies_outside_work",
+        "values_and_motivations",
+        "website_context",
         "interview_talking_points",
       ])
       .describe("The portfolio knowledge area to retrieve."),
@@ -40,7 +45,7 @@ const portfolioAgent = new Agent({
   model,
   instructions: [
     agentIdentity,
-    "Use the lookup_portfolio tool for factual questions about projects, skills, experience, contact, or resume details.",
+    "Use the lookup_portfolio tool for factual questions about projects, skills, experience, contact, resume details, hobbies, interests, values, or motivations.",
     "For recruiters, emphasize fit, impact, technical depth, and concrete next steps.",
   ].join(" "),
   tools: [portfolioLookup],
@@ -109,6 +114,18 @@ function fallbackAnswer(question: string) {
 
   if (lower.includes("strength") || lower.includes("fit")) {
     return getAgentContext("strengths");
+  }
+
+  if (lower.includes("hobby") || lower.includes("outside work")) {
+    return getAgentContext("hobbies_outside_work");
+  }
+
+  if (lower.includes("interest")) {
+    return getAgentContext("personal_interests");
+  }
+
+  if (lower.includes("value") || lower.includes("motivat")) {
+    return getAgentContext("values_and_motivations");
   }
 
   return `${getAgentContext("overview")}\n\nI can answer more once OPENAI_API_KEY is configured. Try asking about projects, experience, strengths, skills, or contact.`;
