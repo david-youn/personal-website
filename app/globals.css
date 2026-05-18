@@ -119,6 +119,7 @@ a {
 
 .terminal-line {
   display: block;
+  max-width: 112ch;
   color: var(--muted);
 }
 

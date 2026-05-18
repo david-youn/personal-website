@@ -46,8 +46,9 @@ const portfolioAgent = new Agent({
   model,
   instructions: [
     agentIdentity,
-    "Use the lookup_portfolio tool for factual questions about projects, skills, experience, contact, resume details, hobbies, interests, values, or motivations.",
-    "For recruiters, emphasize fit, impact, technical depth, and concrete next steps.",
+    "Use the lookup_portfolio tool for factual questions about projects, skills, experience, contact, resume details, hobbies, interests, values, motivations, or background.",
+    "Format answers for a terminal UI: concise, well-spaced, and easy to scan. Prefer short bullets over long paragraphs.",
+    "For recruiters, emphasize fit, impact, technical depth, and concrete next steps without sounding promotional.",
   ].join(" "),
   tools: [portfolioLookup],
 });

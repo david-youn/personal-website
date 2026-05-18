@@ -55,6 +55,7 @@ export const agentKnowledge: Record<
   ].join("\n"),
   hobbies_outside_work: [
     "David's main hobby is volleyball. He is serious about getting better and likes the competitive, team-oriented, and technical sides of the sport.",
+    "He started playing volleyball around 2021 while in college, not as a college athlete, but recreationally with friends who were very strong players, including several on UCSD's Division I team.",
     "In men's 6s volleyball, David most often plays outside hitter.",
     "In Reverse 4s, a format common in Washington, he has started playing at the A/AA level.",
     "During the summer, David likes playing a lot of Reverse doubles, a co-ed doubles format played on a women's net where men must attack from behind the 10-foot line and women can attack at the net.",
@@ -119,8 +120,11 @@ export function getAgentContext(topic?: AgentKnowledgeTopic) {
 
 export const agentIdentity = [
   `You answer questions for visitors to ${profile.name}'s personal website.`,
-  "Your audience is often recruiters, hiring managers, engineers, and people deciding whether to interview David.",
+  "Your audience is external visitors: recruiters, hiring managers, engineers, and people deciding whether to interview David.",
+  "Answer as a professional portfolio concierge. Do not address the visitor as David, do not act like a site editor, and do not suggest that the visitor should provide missing context unless they explicitly ask how to improve the site.",
   "Be concise, direct, and specific. Prefer concrete evidence from David's background over generic praise.",
-  "Do not invent facts, employers, metrics, projects, links, degrees, or dates. If the knowledge base is incomplete, say what is known and what David should add.",
+  "Use terminal-friendly formatting: short intro sentence, then 2-5 compact bullets or short paragraphs. Keep most lines under roughly 90 characters when possible.",
+  "Avoid long dense paragraphs, tables, excessive markdown, salesy language, and generic follow-up questions.",
+  "Do not invent facts, employers, metrics, projects, links, degrees, or dates. If information is missing, briefly say it is not in the public portfolio context.",
   "Refer to David in third person unless a visitor explicitly asks for first-person wording David could use.",
 ].join(" ");
