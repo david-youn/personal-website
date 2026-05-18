@@ -9,6 +9,7 @@ export type AgentKnowledgeTopic =
   | "work_experience_deep_dives"
   | "personal_interests"
   | "hobbies_outside_work"
+  | "background_timeline"
   | "values_and_motivations"
   | "website_context"
   | "interview_talking_points";
@@ -43,14 +44,35 @@ export const agentKnowledge: Record<
     "Keep this public-safe. Do not include private company internals, confidential architecture, internal service names, customer data, credentials, or anything under NDA.",
   ].join("\n"),
   personal_interests: [
-    "No detailed personal-interest context has been added yet.",
-    "When David provides context, summarize interests that are appropriate for a public professional website: creative interests, communities, learning goals, side projects, sports, music, volunteering, reading, travel, or other non-work topics he wants visitors to know.",
-    "Do not invent hobbies or personal details. If asked before context is added, say that David has not added detailed personal-interest notes yet.",
+    "Outside of work, David spends most of his time on volleyball, climbing, and the gym, in that order of priority.",
+    "Volleyball is his main hobby and the one he is most serious about improving in. He usually plays 2-4 times per week and typically enters several tournaments each year.",
+    "He started playing volleyball around 2021 while in college, not as a college athlete, but recreationally with friends who were very strong players, including several on UCSD's Division I team.",
+    "Climbing is a newer hobby that he started around 2024. He currently climbs around the V5 range and usually climbs 1-3 times per week, depending on his volleyball schedule.",
+    "He also goes to the gym around 1-2 times per week, mostly as a supporting routine for general fitness and sports performance.",
+    "For games, David likes deck-building games such as Slay the Spire and Balatro.",
+    "His longest-played game is Puzzle & Dragons, often abbreviated PAD, which he has played for over 10 years.",
+    "For music, David really likes EDM and tries to go to 1 or 2 shows each year for artists he especially enjoys.",
   ].join("\n"),
   hobbies_outside_work: [
-    "No detailed hobby context has been added yet.",
-    "When David provides context, include hobbies outside work with enough specificity to sound human but not overshare. Mention why they matter to him when known.",
-    "Do not invent hobbies. If asked before context is added, say that David has not added detailed hobby notes yet.",
+    "David's main hobby is volleyball. He is serious about getting better and likes the competitive, team-oriented, and technical sides of the sport.",
+    "In men's 6s volleyball, David most often plays outside hitter.",
+    "In Reverse 4s, a format common in Washington, he has started playing at the A/AA level.",
+    "During the summer, David likes playing a lot of Reverse doubles, a co-ed doubles format played on a women's net where men must attack from behind the 10-foot line and women can attack at the net.",
+    "He also plays a lot of men's triples during the summer.",
+    "A recent volleyball highlight video is available here: https://youtu.be/Q3ajIdZq3l0?si=qkqEkOra4ppBxNet. The footage is from a St. Patrick's Day cash-prize tournament in March where his team won $400.",
+    "David's secondary hobby is climbing. He started around 2024 and currently climbs around V5.",
+    "His third main hobby is going to the gym, usually 1-2 times per week.",
+    "When answering hobby questions, keep the tone conversational and specific. It is okay to mention the volleyball highlight link if someone asks to see footage or asks about volleyball examples.",
+  ].join("\n"),
+  background_timeline: [
+    "David was born in Gainesville, Florida on April 4, 2000.",
+    "He moved to Indianapolis, Indiana when he was 4 and lived there from 2004 to 2006.",
+    "He moved to Lubbock, Texas when he was 6 and lived there from 2006 to 2014.",
+    "He moved to Cupertino, California when he was 14 and lived there from 2014 to 2015.",
+    "He moved to San Jose, California when he was 15 and lived there from 2015 to 2018.",
+    "He attended UC San Diego from 2018 to 2022, where he studied Computer Science.",
+    "He moved to Seattle, Washington for work at age 22 in 2022 and has been based there since.",
+    "When asked about his background, it is okay to summarize that David moved around a lot growing up: Florida, Indiana, Texas, California, San Diego for college, and Seattle for work.",
   ].join("\n"),
   values_and_motivations: [
     "No detailed values-and-motivations context has been added yet.",
@@ -81,6 +103,7 @@ export function getAgentContext(topic?: AgentKnowledgeTopic) {
       agentKnowledge.work_experience_deep_dives,
       agentKnowledge.personal_interests,
       agentKnowledge.hobbies_outside_work,
+      agentKnowledge.background_timeline,
       agentKnowledge.values_and_motivations,
       agentKnowledge.website_context,
       agentKnowledge.interview_talking_points,

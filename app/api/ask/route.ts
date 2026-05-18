@@ -29,6 +29,7 @@ const portfolioLookup = tool({
         "work_experience_deep_dives",
         "personal_interests",
         "hobbies_outside_work",
+        "background_timeline",
         "values_and_motivations",
         "website_context",
         "interview_talking_points",
@@ -116,12 +117,31 @@ function fallbackAnswer(question: string) {
     return getAgentContext("strengths");
   }
 
-  if (lower.includes("hobby") || lower.includes("outside work")) {
+  if (
+    lower.includes("hobby") ||
+    lower.includes("outside work") ||
+    lower.includes("volleyball") ||
+    lower.includes("climb") ||
+    lower.includes("gym") ||
+    lower.includes("game") ||
+    lower.includes("music") ||
+    lower.includes("edm")
+  ) {
     return getAgentContext("hobbies_outside_work");
   }
 
   if (lower.includes("interest")) {
     return getAgentContext("personal_interests");
+  }
+
+  if (
+    lower.includes("born") ||
+    lower.includes("from") ||
+    lower.includes("background") ||
+    lower.includes("grew up") ||
+    lower.includes("lived")
+  ) {
+    return getAgentContext("background_timeline");
   }
 
   if (lower.includes("value") || lower.includes("motivat")) {
